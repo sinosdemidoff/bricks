@@ -1,0 +1,14 @@
+<wpml-config>
+	<custom-types>
+		<custom-type translate="1" display-as-translated="1">bricks_template</custom-type>
+	</custom-types>
+	<custom-fields>
+		<custom-field action="copy" style="textarea">_bricks_template_type</custom-field>
+	</custom-fields>
+	<admin-texts>
+		<key name="bricks_global_settings">
+			<key name="woocommerceAjaxAddingText" />
+			<key name="woocommerceAjaxAddedText" />
+		</key>
+	</admin-texts>
+</wpml-config>
