@@ -2792,7 +2792,9 @@ function bricksTabsAccordionLayoutOnMobile() {
 			// STEP: Mode: "Accordion"
 
 			// Hide the entire tab menu
-			tabMenu.style.display = 'none'
+			if (tabMenu) {
+				tabMenu.style.display = 'none'
+			}
 
 			tabElement
 				.querySelectorAll('.tab-title:not([data-brx-tab-mode="accordion"])')
@@ -2842,7 +2844,9 @@ function bricksTabsAccordionLayoutOnMobile() {
 			// STEP: Mode "Tabs"
 
 			// Revert the tab menu to its original display value
-			tabMenu.style.display = ''
+			if (tabMenu) {
+				tabMenu.style.display = ''
+			}
 
 			tabElement.querySelectorAll('[data-brx-tab-mode="accordion"]').forEach((el, index) => {
 				const tabTitle = tabElement.querySelectorAll(
@@ -3917,8 +3921,9 @@ function bricksGetLightboxVideoNode(videoUrl, controls, muted) {
 			videoUrl = videoData.url
 
 			if (videoData.id) {
-				// Add parameters
-				videoUrl += '?autoplay=1'
+				// Add parameters (check if URL already has parameters from bricksGetYouTubeVideoLinkData) (@since 2.1.3)
+				const separator = videoUrl.indexOf('?') !== -1 ? '&' : '?'
+				videoUrl += separator + 'autoplay=1'
 				videoUrl += '&rel=0'
 
 				// Hide YouTube controls
@@ -3932,7 +3937,6 @@ function bricksGetLightboxVideoNode(videoUrl, controls, muted) {
 				}
 			}
 		}
-
 		if (videoUrl.indexOf('vimeo.com') !== -1) {
 			isIframe = true
 
@@ -4188,7 +4192,8 @@ const bricksAccordionFn = new BricksFunction({
 
 				// No independent toggle: slideUp .open item (if it's currently not open)
 				if (!independentToggle) {
-					let openItems = accordion.querySelectorAll('.brx-open')
+					// Select only direct children items, not nested accordion items (@since 2.1.3)
+					let openItems = accordion.querySelectorAll(':scope > .brx-open')
 
 					if (openItems.length) {
 						openItems.forEach((openItem) => {
@@ -4301,12 +4306,7 @@ const bricksAnimatedTypingFn = new BricksFunction({
 		// Replace all content in strings to HTML entities so the animation can play smoothly (@since 2.1)
 		if (Array.isArray(scriptArgs.strings)) {
 			scriptArgs.strings = scriptArgs.strings.map((str) => {
-				return str
-					.replace(/&/g, '&amp;')
-					.replace(/</g, '&lt;')
-					.replace(/>/g, '&gt;')
-					.replace(/"/g, '&quot;')
-					.replace(/'/g, '&#39;')
+				return str.replace(/&/g, '&amp;')
 			})
 		}
 
@@ -5222,24 +5222,26 @@ const bricksFormFn = new BricksFunction({
 					const imagePreview = imageField.parentNode.querySelector('.image-preview')
 					const hiddenInput = imageField.parentNode.querySelector('input[type="hidden"]')
 
-					if (!imagePreview || !attachments[0]) return
+					if (!attachments[0]) return
 
 					const attachment = attachments[0]
 
-					// Remove existing preview
-					const existingPreview = imagePreview.querySelector('img')
-					if (existingPreview) {
-						existingPreview.remove()
+					if (imagePreview) {
+						// Remove existing preview
+						const existingPreview = imagePreview.querySelector('img')
+						if (existingPreview) {
+							existingPreview.remove()
+						}
+
+						// Create and append new image
+						const img = document.createElement('img')
+						img.src = attachment.url
+						img.alt = attachment.alt || ''
+						img.title = attachment.title || ''
+						img.style = 'max-height: 150px'
+
+						imagePreview.insertBefore(img, imagePreview.firstChild)
 					}
-
-					// Create and append new image
-					const img = document.createElement('img')
-					img.src = attachment.url
-					img.alt = attachment.alt || ''
-					img.title = attachment.title || ''
-					img.style = 'max-height: 150px'
-
-					imagePreview.insertBefore(img, imagePreview.firstChild)
 
 					// Update hidden input with attachment ID
 					if (hiddenInput) {
@@ -5861,6 +5863,13 @@ function bricksSubmitForm(elementId, form, files, recaptchaToken, nonceRefreshed
 			console.warn('bricks_form_submit', xhr, res)
 		}
 
+		// Unknown reason but we should allow user to resubmit (@since 2.x)
+		if (!res) {
+			submitButton.classList.remove('sending')
+			submitButton.disabled = false
+			form.dataset.submitting = 'false'
+		}
+
 		// Return: No response or response not yet DONE (@since 1.9.6)
 		if (!res || xhr?.readyState != 4) {
 			return
@@ -5883,6 +5892,8 @@ function bricksSubmitForm(elementId, form, files, recaptchaToken, nonceRefreshed
 		if (res?.data?.code === 'invalid_nonce') {
 			// Refresh form nonce and resubmit form (if refresh has not yet been attempted)
 			if (!nonceRefreshed) {
+				// Set submitting state to false to allow resubmit (@since 2.x)
+				form.dataset.submitting = 'false'
 				bricksRegenerateNonceAndResubmit(elementId, form, files, recaptchaToken)
 				return
 			}
@@ -8545,6 +8556,17 @@ function bricksInteractionCallbackExecution(sourceEl, config) {
 			}
 
 			break
+
+		// Click element (@since 2.1.3)
+		case 'click':
+			if (target && target.length) {
+				target.forEach((clickTarget) => {
+					clickTarget.click()
+				})
+			}
+
+			break
+
 		case 'storageAdd':
 		case 'storageRemove':
 		case 'storageCount':
@@ -12011,7 +12033,26 @@ function bricksGetYouTubeVideoLinkData(url) {
 		const videoId = match[1]
 
 		// Create embed URL with video ID
-		const embedUrl = `https://www.youtube.com/embed/${videoId}`
+		let embedUrl = `https://www.youtube.com/embed/${videoId}`
+
+		// Preserve query parameters from the original URL (@since 2.1.3)
+		try {
+			const urlObj = new URL(url)
+			const params = new URLSearchParams(urlObj.search)
+
+			// Remove the 'v' parameter as it's already in the path
+			params.delete('v')
+
+			// If there are remaining parameters, append them to the embed URL
+			const paramString = params.toString()
+			if (paramString) {
+				embedUrl += '?' + paramString
+			}
+		} catch (e) {
+			// If URL parsing fails, continue without parameters
+			console.warn('Failed to parse URL parameters:', e)
+		}
+
 		return {
 			url: embedUrl,
 			id: videoId
@@ -12065,6 +12106,7 @@ let bricksTimeouts = {}
 document.addEventListener('DOMContentLoaded', (event) => {
 	bricksIsFrontend = document.body.classList.contains('bricks-is-frontend')
 
+	// Block Editor Integration: MutationObserver on editor container (@since 2.1.2)
 	bricksBlockEditorIntegration()
 
 	// Nav menu & Dropdown (@since 1.8)

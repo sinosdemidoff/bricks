@@ -391,11 +391,6 @@ class Element_Tabs extends Element {
 				$tab_title_classes[] = "icon-{$tab['iconPosition']}";
 			}
 
-			// Set 'id' to open & scroll to specific tab (@since 1.8.6)
-			if ( ! empty( $tab['anchorId'] ) ) {
-				$this->set_attribute( "tab-title-$index", 'id', $tab['anchorId'] );
-			}
-
 			$selected = $index === 0 ? 'true' : 'false';
 			$tabindex = $index === 0 ? '0' : '-1';
 
@@ -403,8 +398,15 @@ class Element_Tabs extends Element {
 			$this->set_attribute( "tab-title-$index", 'role', 'tab' );
 			$this->set_attribute( "tab-title-$index", 'aria-selected', $selected );
 			$this->set_attribute( "tab-title-$index", 'aria-controls', "panel-$this->id-$index" );
-			$this->set_attribute( "tab-title-$index", 'id', "brx-tab-{$this->id}-$index" );
 			$this->set_attribute( "tab-title-$index", 'tabindex', $tabindex );
+
+			// Set 'id' to open & scroll to specific tab (@since 1.8.6)
+			// Only set manual ID if provided, otherwise use auto-generated ID (@since 2.x)
+			if ( ! empty( $tab['anchorId'] ) ) {
+				$this->set_attribute( "tab-title-$index", 'id', $tab['anchorId'] );
+			} else {
+				$this->set_attribute( "tab-title-$index", 'id', "brx-tab-{$this->id}-$index" );
+			}
 
 			$output .= "<li {$this->render_attributes( "tab-title-$index" )}>";
 
@@ -464,9 +466,12 @@ class Element_Tabs extends Element {
 
 			$tab_pane_classes = [ 'tab-pane' ];
 
+			// Determine the correct tab title ID for aria-labelledby (@since 2.x)
+			$tab_title_id = ! empty( $tab['anchorId'] ) ? $tab['anchorId'] : "brx-tab-{$this->id}-$index";
+
 			$this->set_attribute( "tab-pane-$index", 'class', $tab_pane_classes );
 			$this->set_attribute( "tab-pane-$index", 'role', 'tabpanel' );
-			$this->set_attribute( "tab-pane-$index", 'aria-labelledby', "brx-tab-$this->id-$index" );
+			$this->set_attribute( "tab-pane-$index", 'aria-labelledby', $tab_title_id );
 			$this->set_attribute( "tab-pane-$index", 'id', "panel-$this->id-$index" );
 			$this->set_attribute( "tab-pane-$index", 'tabindex', '0' );
 

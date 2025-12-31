@@ -1586,19 +1586,19 @@ class Filter_Element extends Element {
 			$controls['customLabelMapping'] = [
 				'type'          => 'repeater',
 				'label'         => esc_html__( 'Label', 'bricks' ) . ': ' . esc_html__( 'Custom', 'bricks' ),
-				'desc'          => esc_html__( 'Search and replace label value.', 'bricks' ),
+				'desc'          => esc_html__( 'Set custom labels for specific values.', 'bricks' ),
 				'titleProperty' => 'optionLabel',
 				'fields'        => [
 					'optionMetaValue' => [
 						'type'           => 'text',
-						'label'          => esc_html__( 'Find', 'bricks' ),
+						'label'          => esc_html__( 'Find', 'bricks' ) . ' (' . esc_html__( 'Value', 'bricks' ) . ')',
 						'inline'         => true,
 						'hasDynamicData' => false,
 					],
 
 					'optionLabel'     => [
 						'type'           => 'text',
-						'label'          => esc_html__( 'Replace with', 'bricks' ),
+						'label'          => esc_html__( 'Label as', 'bricks' ),
 						'inline'         => true,
 						'hasDynamicData' => false,
 					],

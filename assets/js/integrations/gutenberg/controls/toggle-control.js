@@ -91,7 +91,7 @@ function createBricksToggleControl(property, props) {
 					style: {
 						position: 'absolute',
 						top: '2px',
-						left: isCurrentlyTrue ? '26px' : '2px',
+						left: isCurrentlyTrue ? '28px' : '2px',
 						width: '20px',
 						height: '20px',
 						backgroundColor: '#fff',

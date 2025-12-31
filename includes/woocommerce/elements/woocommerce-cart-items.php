@@ -148,7 +148,7 @@ class Woocommerce_Cart_Items extends Element {
 			'css'      => [
 				[
 					'property' => 'font',
-					'selector' => 'thead',
+					'selector' => 'thead th', // Target th to override default font weight on th elements (@since 2.1.3)
 				],
 			],
 			'required' => [ 'headHide', '=', '' ],

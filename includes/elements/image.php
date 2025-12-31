@@ -268,31 +268,61 @@ class Element_Image extends Element {
 			'placeholder' => esc_html__( 'None', 'bricks' ),
 		];
 
+		// Lightbox separator control
+		$this->controls['lightboxSep'] = [
+			'label'    => esc_html__( 'Lightbox', 'bricks' ),
+			'type'     => 'separator',
+			'required' => [ 'link', '=', 'lightbox' ],
+		];
+
 		$this->controls['lightboxImageSize'] = [
-			'label'       => esc_html__( 'Lightbox', 'bricks' ) . ': ' . esc_html__( 'Image size', 'bricks' ),
+			'label'       => esc_html__( 'Image size', 'bricks' ),
 			'type'        => 'select',
 			'options'     => $this->control_options['imageSizes'],
 			'placeholder' => esc_html__( 'Full', 'bricks' ),
-			'required'    => [ 'link', '=', 'lightbox' ],
+			'required'    => [
+				[ 'link', '=', 'lightbox' ],
+				[ 'image.size', '!=', '' ] // Has size means its in the media library or dynamic data
+			],
+		];
+
+		/**
+		 * Custom lightbox image size (when image set via custom URL, etc.)
+		 *
+		 * @since 2.1.3
+		 */
+		$this->controls['lightboxWidth'] = [
+			'tab'      => 'content',
+			'label'    => esc_html__( 'Width', 'bricks' ) . ' (px)',
+			'type'     => 'number',
+			'required' => [ 'link', '=', 'lightbox' ],
+		];
+
+		$this->controls['lightboxHeight'] = [
+			'tab'      => 'content',
+			'label'    => esc_html__( 'Height', 'bricks' ) . ' (px)',
+			'type'     => 'number',
+			'required' => [ 'link', '=', 'lightbox' ],
 		];
 
 		$this->controls['lightboxAnimationType'] = [
-			'label'       => esc_html__( 'Lightbox', 'bricks' ) . ': ' . esc_html__( 'Animation', 'bricks' ),
+			'label'       => esc_html__( 'Animation', 'bricks' ),
 			'type'        => 'select',
 			'options'     => $this->control_options['lightboxAnimationTypes'],
+			'inline'      => true,
 			'placeholder' => esc_html__( 'Zoom', 'bricks' ),
 			'required'    => [ 'link', '=', 'lightbox' ],
 		];
 
 		$this->controls['lightboxCaption'] = [
 			'tab'      => 'content',
-			'label'    => esc_html__( 'Lightbox', 'bricks' ) . ': ' . esc_html__( 'Caption', 'bricks' ),
+			'label'    => esc_html__( 'Caption', 'bricks' ),
 			'type'     => 'checkbox',
 			'required' => [ 'link', '=', 'lightbox' ],
 		];
 
 		$this->controls['lightboxId'] = [
-			'label'       => esc_html__( 'Lightbox', 'bricks' ) . ': ID',
+			'label'       => 'ID',
 			'type'        => 'text',
 			'inline'      => true,
 			'required'    => [ 'link', '=', 'lightbox' ],
@@ -301,7 +331,7 @@ class Element_Image extends Element {
 
 		$this->controls['lightboxCropped'] = [
 			'tab'      => 'content',
-			'label'    => esc_html__( 'Lightbox', 'bricks' ) . ': ' . esc_html__( 'Cropped', 'bricks' ),
+			'label'    => esc_html__( 'Cropped', 'bricks' ),
 			'desc'     => esc_html__( 'Enable if image is cropped for a smooth lightbox image transition.', 'bricks' ),
 			'type'     => 'checkbox',
 			'required' => [ 'link', '=', 'lightbox' ],
@@ -309,7 +339,7 @@ class Element_Image extends Element {
 
 		$this->controls['lightboxPadding'] = [
 			'tab'      => 'content',
-			'label'    => esc_html__( 'Lightbox', 'bricks' ) . ': ' . esc_html__( 'Padding', 'bricks' ) . ' (px)',
+			'label'    => esc_html__( 'Padding', 'bricks' ) . ' (px)',
 			'type'     => 'dimensions',
 			'required' => [ 'link', '=', 'lightbox' ],
 		];
@@ -951,8 +981,14 @@ class Element_Image extends Element {
 				if ( $lightbox_image ) {
 					$this->set_attribute( 'link', 'href', $lightbox_image[0] );
 					$this->set_attribute( 'link', 'data-pswp-src', $lightbox_image[0] );
-					$this->set_attribute( 'link', 'data-pswp-width', $lightbox_image[1] );
-					$this->set_attribute( 'link', 'data-pswp-height', $lightbox_image[2] );
+
+					// Use custom width if set, otherwise use image width (@since 2.1.3)
+					$lightbox_width = ! empty( $settings['lightboxWidth'] ) ? intval( $settings['lightboxWidth'] ) : $lightbox_image[1];
+					$this->set_attribute( 'link', 'data-pswp-width', $lightbox_width );
+
+					// Use custom height if set, otherwise use image height (@since 2.1.3)
+					$lightbox_height = ! empty( $settings['lightboxHeight'] ) ? intval( $settings['lightboxHeight'] ) : $lightbox_image[2];
+					$this->set_attribute( 'link', 'data-pswp-height', $lightbox_height );
 				}
 
 				if ( ! empty( $settings['lightboxId'] ) ) {

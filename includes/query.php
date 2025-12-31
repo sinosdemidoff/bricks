@@ -1034,13 +1034,18 @@ class Query {
 
 		if ( $result === false ) {
 			$terms_query = new \WP_Term_Query( $this->query_vars );
+			$total       = count( $terms_query->get_terms() ); // Default total count
 
-			// Run another query to get the total count, set number to 0 to avoid limit
-			$total_terms_query = new \WP_Term_Query( array_merge( $this->query_vars, [ 'number' => 0 ] ) );
+			// Avoid PHP error if user use PHP Query Editor and return non-array value (#86c5yymz3)
+			if ( is_array( $this->query_vars ) ) {
+				// Run another query to get the total count, set number to 0 to avoid limit
+				$total_terms_query = new \WP_Term_Query( array_merge( $this->query_vars, [ 'number' => 0 ] ) );
+				$total             = count( $total_terms_query->get_terms() );
+			}
 
 			$result = [
 				'terms' => $terms_query->get_terms(),
-				'total' => count( $total_terms_query->get_terms() ),
+				'total' => $total,
 			];
 
 			$this->set_query_cache( $result );

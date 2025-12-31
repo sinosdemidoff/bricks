@@ -233,13 +233,11 @@ class Element_Video extends Element {
 				'custom'  => esc_html__( 'Custom', 'bricks' ),
 			],
 			'placeholder' => esc_html__( 'None', 'bricks' ),
-			'description' => sprintf(
-				'%s :<br> %s > %s > %s',
-				esc_html__( 'Fallback preview image', 'bricks' ),
-				esc_html__( 'Settings', 'bricks' ),
-				esc_html__( 'Theme Styles', 'bricks' ),
-				esc_html__( 'Element - Video', 'bricks' )
-			),
+			'description' => esc_html__( 'Fallback preview image', 'bricks' ) . ':<br> ' .
+				esc_html__( 'Settings', 'bricks' ) . ' > ' .
+				esc_html__( 'Theme Styles', 'bricks' ) . ' > ' .
+				esc_html__( 'Element', 'bricks' ) . ' > ' .
+				esc_html__( 'Video', 'bricks' ),
 			'required'    => [
 				[ 'videoType', '=', [ 'vimeo', 'youtube' ] ],
 			],
@@ -251,6 +249,24 @@ class Element_Video extends Element {
 			'required' => [
 				[ 'videoType', '=', [ 'vimeo', 'youtube' ] ],
 				[ 'previewImage', '=', 'custom' ],
+			],
+		];
+
+		$this->controls['previewImageSize'] = [
+			'tab'         => 'content',
+			'label'       => esc_html__( 'Image size', 'bricks' ),
+			'type'        => 'select',
+			'options'     => [
+				'default'       => esc_html__( 'Default', 'bricks' ) . ' (120x90)',
+				'mqdefault'     => esc_html__( 'Medium', 'bricks' ) . ' (320x180)',
+				'hqdefault'     => esc_html__( 'High', 'bricks' ) . ' (480x360)',
+				'sddefault'     => esc_html__( 'Standard', 'bricks' ) . ' (640x480)',
+				'maxresdefault' => esc_html__( 'Maximum', 'bricks' ) . ' (1280x720)',
+			],
+			'placeholder' => esc_html__( 'High', 'bricks' ) . ' (480x360)',
+			'required'    => [
+				[ 'videoType', '=', 'youtube' ],
+				[ 'previewImage', '=', 'default' ],
 			],
 		];
 
@@ -1361,7 +1377,8 @@ class Element_Video extends Element {
 
 		// STEP: Get YouTube video preview image from API
 		if ( $video_type === 'youtube' ) {
-			return "https://img.youtube.com/vi/{$settings['youTubeId']}/hqdefault.jpg";
+			$preview_size = $settings['previewImageSize'] ?? 'hqdefault';
+			return "https://img.youtube.com/vi/{$settings['youTubeId']}/{$preview_size}.jpg";
 		}
 
 		// STEP: Get the Vimeo video preview image from API

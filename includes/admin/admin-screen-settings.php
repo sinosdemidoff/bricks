@@ -1363,6 +1363,7 @@ if ( $code_review ) {
 					<td>
 						<input type="checkbox" name="builderAutosaveDisabled" id="builderAutosaveDisabled" <?php checked( isset( $settings['builderAutosaveDisabled'] ) ); ?>>
 						<label for="builderAutosaveDisabled"><?php esc_html_e( 'Disable autosave', 'bricks' ); ?></label>
+						<p class="description"><?php esc_html_e( 'The autosave creates a backup copy of all elements on the canvas. Global data such as components, classes, and variables is not saved. Autosaves can be restored under Manage > History / Rivisions from the builder toolbar.', 'bricks' ); ?></p>
 
 					<?php if ( ! isset( $settings['builderAutosaveDisabled'] ) ) { ?>
 						<div class="separator"></div>

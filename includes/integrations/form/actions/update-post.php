@@ -190,12 +190,19 @@ class Update_Post extends Base {
 			$field_id = $mapping['metaValue'] ?? '';
 
 			$is_file_upload = false;
+			$is_date_picker = false;
+
 			if ( $field_id ) {
 				// Loop through the form settings fields to find the type of the field
 				foreach ( $form_settings['fields'] as $field_setting ) {
 					if ( $field_setting['id'] === $field_id && $field_setting['type'] === 'file' ) {
 						$is_file_upload = true;
 						break;
+					}
+
+					// Convert datepicker field from date_format to Ymd format
+					if ( $field_setting['id'] === $field_id && $field_setting['type'] === 'datepicker' ) {
+						$is_date_picker = true;
 					}
 				}
 			}
@@ -204,8 +211,23 @@ class Update_Post extends Base {
 				// Assign file data
 				$meta_value = $uploaded_files[ "form-field-$field_id" ];
 				// Since it's a file upload, no sanitization is applied here
-			} else {
-				// Handle non-file upload fields
+			}
+
+			// Handle date picker field (@since 2.1.3)
+			elseif ( $is_date_picker ) {
+				// Handle date picker field
+				$meta_value = $form->get_field_value( $field_id );
+
+				// Convert date to Ymd format for storage
+				$date_format = 'Ymd';
+				$timestamp   = strtotime( $meta_value );
+				if ( $timestamp !== false ) {
+					$meta_value = date( $date_format, $timestamp );
+				}
+			}
+
+			// Handle non-file upload fields
+			else {
 				$meta_value          = $form->get_field_value( $field_id );
 				$sanitization_method = $mapping['sanitizationMethod'] ?? 'sanitize_text_field';
 				$meta_value          = $this->sanitize_meta_value( $meta_value, $sanitization_method );
@@ -216,12 +238,31 @@ class Update_Post extends Base {
 			// Update ACF field using update_field
 			$acf_field_key = \Bricks\Integrations\Form\Init::get_acf_field_key_from_meta_key( $meta_key, $post_id );
 			if ( $acf_field_key && function_exists( 'update_field' ) ) {
-				// Convert comma-separated image IDs to array for ACF gallery fields
-				if ( is_string( $meta_value ) && strpos( $meta_value, ',' ) !== false ) {
-					$meta_value = array_map( 'intval', explode( ',', $meta_value ) );
+				// Get ACF field configuration to handle different field types properly (@since 2.1.3)
+				$acf_field_config = function_exists( 'acf_get_field' ) ? acf_get_field( $acf_field_key ) : false;
+
+				if ( $acf_field_config ) {
+					switch ( $acf_field_config['type'] ) {
+						case 'image':
+							// For image fields, convert to integer ID
+							if ( is_string( $meta_value ) ) {
+								// Split by spaces and take the first valid ID
+								$ids        = array_filter( array_map( 'intval', explode( ' ', $meta_value ) ) );
+								$meta_value = ! empty( $ids ) ? $ids[0] : 0;
+							}
+							break;
+
+						case 'gallery':
+							// For gallery fields, convert comma-separated IDs to array
+							if ( is_string( $meta_value ) && strpos( $meta_value, ',' ) !== false ) {
+								$meta_value = array_map( 'intval', explode( ',', $meta_value ) );
+							}
+							break;
+					}
 				}
 
 				update_field( $acf_field_key, $meta_value, $post_id );
+
 				continue;
 			}
 

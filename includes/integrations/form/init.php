@@ -698,6 +698,9 @@ class Init {
 					if ( ! empty( $field['fileUploadAllowedTypes'] ) ) {
 						$allowed_file_extensions = $field['fileUploadAllowedTypes'] ?? '';
 
+						// We need to render dynamic data in the allowed file extensions field (@since 2.1.3)
+						$allowed_file_extensions = $this->render_data( $allowed_file_extensions );
+
 						// Convert the extensions to mime types
 						$allowed_mime_types_for_field = $this->extensions_to_mime_types( $allowed_file_extensions );
 					}

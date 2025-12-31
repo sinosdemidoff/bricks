@@ -1376,6 +1376,7 @@ class Admin {
 			'components'            => $components,
 			'enabledComponentIds'   => $enabled_component_ids,
 			'sectionTemplates'      => $all_section_templates,
+			'builderEditLink'       => Helpers::get_builder_edit_link( $post_id ),
 		];
 
 		// Always localize data for Gutenberg

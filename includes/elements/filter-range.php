@@ -338,11 +338,11 @@ class Filter_Range extends Filter_Element {
 				],
 				[
 					'property' => 'border-radius',
-					'selector' => '.double-slider-wrap input[type="range"]::-moz-range-thumb',
+					'selector' => ':scope > .double-slider-wrap input[type="range"]::-moz-range-thumb',
 				],
 				[
 					'property' => 'border-radius',
-					'selector' => '.double-slider-wrap input[type="range"]::-webkit-slider-thumb',
+					'selector' => ':scope > .double-slider-wrap input[type="range"]::-webkit-slider-thumb',
 				],
 			],
 			'placeholder' => '14px',

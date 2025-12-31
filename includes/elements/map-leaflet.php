@@ -102,9 +102,10 @@ class Element_Map_Leaflet extends Element {
 				],
 
 				'label'            => [
-					'label' => esc_html__( 'Label', 'bricks' ),
-					'type'  => 'text',
-					'desc'  => esc_html__( 'To distinguish markers in the builder.', 'bricks' ),
+					'label'          => esc_html__( 'Label', 'bricks' ),
+					'type'           => 'text',
+					'desc'           => esc_html__( 'To distinguish markers in the builder.', 'bricks' ),
+					'hasDynamicData' => false, // Removed dynamic data support, as it's only used in builder (@since 2.x)
 				],
 
 				'customIcon'       => [
@@ -310,9 +311,20 @@ class Element_Map_Leaflet extends Element {
 			foreach ( $settings['markers'] as $marker ) {
 
 				// Skip: No coordinates defined
-				if ( empty( $marker['coordinates'] ) || strpos( $marker['coordinates'], ',' ) === false ) {
+				if ( empty( $marker['coordinates'] ) ) {
 					continue;
 				}
+
+				// Parse marker dynamic data (@since 2.x)
+				$marker['coordinates'] = $this->render_dynamic_data( $marker['coordinates'] );
+
+				// Skip: Invalid coordinates format
+				if ( strpos( $marker['coordinates'], ',' ) === false ) {
+					continue;
+				}
+
+				// Parse rest of marker dynamic data (@since 2.x)
+				$marker['popupText'] = $this->render_dynamic_data( $marker['popupText'] );
 
 				$m = $this->get_lat_lng( $marker['coordinates'] );
 
@@ -363,7 +375,7 @@ class Element_Map_Leaflet extends Element {
 				// Controls
 				'attributionControl' => $settings['attributionControl'] ?? false,
 				'zoomControl'        => $settings['zoomControl'] ?? false,
-				'center'             => $this->get_lat_lng( $settings['center'] ?? '' ),
+				'center'             => $this->get_lat_lng( $this->render_dynamic_data( $settings['center'] ?? '' ) ),
 
 				// Interactions
 				'closePopupOnClick'  => $settings['closePopupOnClick'] ?? false,

@@ -2535,7 +2535,7 @@ class Element_Form extends Element {
 		$fields                     = $settings['fields'] ?? [];
 		$actions                    = $settings['actions'] ?? [];
 		$create_post_type           = $settings['createPostType'] ?? null;
-		$create_post_meta           = $settings['createPostMeta'] ?? null;
+		$create_post_meta           = $settings['createPostMeta'] ?? [];
 		$update_post_id             = $settings['updatePostId'] ?? null;
 		$update_post_title          = $settings['updatePostTitle'] ?? null;
 		$update_post_excerpt        = $settings['updatePostExcerpt'] ?? null;
@@ -2549,7 +2549,7 @@ class Element_Form extends Element {
 		}
 
 		// Post meta: Create/update post (@since 2.1)
-		$update_post_meta = $settings['updatePostMeta'] ?? null;
+		$update_post_meta = $settings['updatePostMeta'] ?? [];
 		if ( ! empty( $create_post_meta ) ) {
 			$update_post_meta = $create_post_meta;
 		}
@@ -2775,7 +2775,8 @@ class Element_Form extends Element {
 				}
 
 				if ( isset( $field['fileUploadAllowedTypes'] ) ) {
-					$types = str_replace( '.', '', strtolower( $field['fileUploadAllowedTypes'] ) );
+					// We need to render dynamic data here (@since 2.1.3)
+					$types = str_replace( '.', '', strtolower( $this->render_dynamic_data( $field['fileUploadAllowedTypes'] ) ) );
 					$types = array_map( 'trim', explode( ',', $types ) );
 
 					if ( in_array( 'jpg', $types ) && ! in_array( 'jpeg', $types ) ) {
@@ -2810,9 +2811,8 @@ class Element_Form extends Element {
 			if ( $field['type'] === 'datepicker' ) {
 				$this->set_attribute( "field-$index", 'class', 'flatpickr' );
 
-				$time_24h = get_option( 'time_format' );
-				$time_24h = strpos( $time_24h, 'H' ) !== false || strpos( $time_24h, 'G' ) !== false;
-
+				$time_24h    = get_option( 'time_format' );
+				$time_24h    = strpos( $time_24h, 'H' ) !== false || strpos( $time_24h, 'G' ) !== false;
 				$date_format = isset( $field['time'] ) ? get_option( 'date_format' ) . ' H:i' : get_option( 'date_format' );
 
 				$datepicker_options = [
@@ -2829,7 +2829,22 @@ class Element_Form extends Element {
 					// 'maxDate' => 'January 01, 2020',
 				];
 
-				// Localization: https://flatpickr.js.org/localization/ (@since 1.8.6)
+				// Populate default date from postmeta (@since 2.1.3)
+				foreach ( $update_post_meta as $post_meta ) {
+					if ( ! empty( $post_meta['metaKey'] ) && ! empty( $post_meta['metaValue'] ) && $post_meta['metaValue'] === $field['id'] ) {
+						$default_date = get_post_meta( $update_post_id, $post_meta['metaKey'], true );
+
+						// Convert to flatpickr format
+						if ( ! empty( $default_date ) ) {
+							if ( is_string( $default_date ) ) {
+								$datepicker_options['defaultDate'] = date( $date_format, strtotime( $default_date ) );
+							}
+						}
+						break;
+					}
+				}
+
+				// Localization: https://flatpickr.js.org/localization/
 				if ( ! empty( $field['l10n'] ) ) {
 					$datepicker_options['locale'] = $field['l10n'];
 				}

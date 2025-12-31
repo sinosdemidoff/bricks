@@ -593,6 +593,18 @@ class Submission_Database {
 			}
 		}
 
+		/**
+		 * No form settings found: Try getting them from the component instance
+		 *
+		 * @since 2.1.3
+		 */
+		if ( ! $form_settings ) {
+			$component_element = Helpers::get_component_element_by_id( $form_id );
+			if ( $component_element ) {
+				$form_settings = $component_element['settings'] ?? [];
+			}
+		}
+
 		return $form_settings;
 	}
 }

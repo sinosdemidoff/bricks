@@ -15,6 +15,7 @@ class License {
 
 		add_action( 'wp_ajax_bricks_activate_license', [ $this, 'activate_license' ] );
 		add_action( 'wp_ajax_bricks_deactivate_license', [ $this, 'deactivate_license' ] );
+		add_action( 'wp_ajax_bricks_revalidate_license', [ $this, 'revalidate_license' ] );
 
 		add_action( 'admin_notices', [ $this, 'admin_notices_license_activation' ] );
 		add_action( 'admin_notices', [ $this, 'admin_notices_license_mismatch' ] );
@@ -377,6 +378,44 @@ class License {
 
 		delete_option( 'bricks_license_key' );
 		delete_transient( 'bricks_license_status' );
+	}
+
+	/**
+	 * Re-validate license
+	 *
+	 * Clears the license status transient and re-validates the license without deactivating it.
+	 *
+	 * @since 2.1.3
+	 * @return void
+	 */
+	public static function revalidate_license() {
+		Ajax::verify_nonce( 'bricks-nonce-admin' );
+
+		// Only a user with full access can re-validate the license
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'verify_request: Sorry, you are not allowed to perform this action.' );
+		}
+
+		// Return: No license key found
+		if ( ! self::$license_key ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'No license key found.', 'bricks' ) ] );
+		}
+
+		// Clear the license status transient to force re-validation
+		delete_transient( 'bricks_license_status' );
+
+		// Re-validate the license using the existing activate_license logic
+		$license_status = self::activate_license();
+
+		// If activate_license returns a status (non-AJAX call), send it as success
+		if ( $license_status ) {
+			wp_send_json_success(
+				[
+					'message' => esc_html__( 'License re-validated successfully.', 'bricks' ),
+					'status'  => $license_status,
+				]
+			);
+		}
 	}
 
 	/**

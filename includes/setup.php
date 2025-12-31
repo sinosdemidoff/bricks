@@ -433,12 +433,6 @@ class Setup {
 			wp_register_script( 'bricks-turnstile', 'https://challenges.cloudflare.com/turnstile/v0/api.js', null, true );
 		}
 
-		// Map element
-		if ( ! empty( Database::$global_settings['apiKeyGoogleMaps'] ) ) {
-			wp_register_script( 'bricks-google-maps', 'https://maps.googleapis.com/maps/api/js?callback=bricksMap&v=3.exp&key={' . Database::$global_settings['apiKeyGoogleMaps'] . '}', [ 'bricks-scripts' ], null, true );
-			wp_register_script( 'bricks-google-maps-infobox', BRICKS_URL_ASSETS . 'js/libs/infobox.min.js', [ 'bricks-google-maps' ], null, true );
-		}
-
 		// Map element: Leaflet (@since 2.1)
 		wp_register_script( 'bricks-leaflet', BRICKS_URL_ASSETS . 'js/libs/leaflet.js', [], '1.9.4', true );
 
@@ -1387,7 +1381,13 @@ class Setup {
 				continue;
 			}
 
-			$post_type = isset( $tax->object_type[0] ) ? ' (' . ucwords( $tax->object_type[0] ) . ')' : '';
+			// Show all post types the taxonomy is registered to (#86c47ukrw; @since 2.x)
+			if ( isset( $tax->object_type ) && is_array( $tax->object_type ) && count( $tax->object_type ) > 0 ) {
+				$post_types = array_map( 'ucwords', $tax->object_type );
+				$post_type  = ' (' . implode( '/', $post_types ) . ')';
+			} else {
+				$post_type = '';
+			}
 
 			$taxonomies_options[ $taxonomy ] = $tax->label . $post_type;
 		}

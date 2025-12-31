@@ -180,7 +180,7 @@ function createBricksQueryControl(property, props) {
 						? currentValue.post_type
 						: currentValue.post_type
 							? [currentValue.post_type]
-							: ['page'],
+							: ['any'],
 					postId: window.bricksGutenbergData?.postId,
 					'bricks-is-builder': '1'
 				}
@@ -206,7 +206,7 @@ function createBricksQueryControl(property, props) {
 						? currentValue.post_type
 						: currentValue.post_type
 							? [currentValue.post_type]
-							: ['page'],
+							: ['any'],
 					postId: window.bricksGutenbergData?.postId,
 					'bricks-is-builder': '1'
 				}

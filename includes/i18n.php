@@ -184,6 +184,8 @@ class I18n {
 			'greaterThan'                             => __( 'Greater than', 'bricks' ),
 			'greaterThanOrEqual'                      => __( 'Greater than or equal', 'bricks' ),
 			'height'                                  => __( 'Height', 'bricks' ),
+			/* translators: Abbreviation for "Height" displayed in the builder toolbar */
+			'heightAbbr'                              => __( 'H', 'bricks' ),
 			'hideOutOfStock'                          => __( 'Hide out of stock', 'bricks' ),
 			'howLongToKeep'                           => __( 'How long to keep', 'bricks' ),
 			'httpsExampleCom'                         => 'https://example.com',
@@ -522,7 +524,6 @@ class I18n {
 			'clauseName'                                  => __( 'Clause name', 'bricks' ),
 			'clauseNameDesc'                              => __( 'Set clause name to be used as "Order by" parameter.', 'bricks' ),
 			'clone'                                       => __( 'Clone', 'bricks' ),
-			'cloned'                                      => __( 'cloned', 'bricks' ),
 			'clean'                                       => __( 'Clean', 'bricks' ),
 			'cleanUp'                                     => __( 'Clean up', 'bricks' ),
 			'clear'                                       => __( 'Clear', 'bricks' ),
@@ -668,6 +669,7 @@ class I18n {
 			'dropFilesJSON'                               => __( 'Drop file(s) here', 'bricks' ) . ' (JSON)',
 			'dropFilesFont'                               => __( 'Drop file(s) here', 'bricks' ) . ' (WOFF, WOFF2, TTF)',
 			'duplicate'                                   => __( 'Duplicate', 'bricks' ),
+			'duplicated'                                  => __( 'Duplicated', 'bricks' ),
 			'duplicateClassesDetected'                    => __( 'Duplicate classes detected', 'bricks' ),
 			'duplicateClassesWarning'                     => __( 'Duplicate classes detected. Resolve conflicts before importing.', 'bricks' ),
 			'duplicateFontVariation'                      => __( 'A font variation with this weight and style already exists.', 'bricks' ),
@@ -775,6 +777,8 @@ class I18n {
 			'paginationOffsetKeyLocationDesc'             => __( 'Where you defined the offset key. Bricks will retrieve the value from there.', 'bricks' ),
 			'paginationTotalExtract'                      => __( 'Total items path', 'bricks' ),
 			'paginationTotalExtractDesc'                  => __( 'Path that contains the total item count. Use "body" to target the response path root and "header" for the response headers. Required for the pagination to work. Use "header.x-wp-totalpages" for WordPress REST API calls.', 'bricks' ),
+			/* translators: Percent symbol displayed in the builder toolbar scale input */
+			'percentSymbol'                               => __( '%', 'bricks' ),
 
 			'fade'                                        => __( 'Fade', 'bricks' ),
 			'farthestSide'                                => __( 'Farthest side', 'bricks' ),
@@ -1610,6 +1614,7 @@ class I18n {
 			'userProfile'                                 => __( 'User profile', 'bricks' ),
 			'username'                                    => __( 'Username', 'bricks' ),
 
+			'validating'                                  => __( 'Validating', 'bricks' ),
 			'value'                                       => __( 'Value', 'bricks' ),
 			'variableNameExists'                          => __( 'Variable name already exists', 'bricks' ),
 			'variable'                                    => __( 'Variable', 'bricks' ),
@@ -1636,6 +1641,8 @@ class I18n {
 
 			'whiteSpace'                                  => __( 'White space', 'bricks' ),
 			'width'                                       => __( 'Width', 'bricks' ),
+			/* translators: Abbreviation for "Width" displayed in the builder toolbar */
+			'widthAbbr'                                   => __( 'W', 'bricks' ),
 			'wrap'                                        => __( 'Wrap', 'bricks' ),
 			'nowrap'                                      => __( 'No wrap', 'bricks' ),
 

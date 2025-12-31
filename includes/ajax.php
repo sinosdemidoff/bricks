@@ -1785,7 +1785,6 @@ class Ajax {
 				// Header template
 				case 'header':
 					if ( isset( $_POST['header'] ) ) {
-						// @since 1.5.4
 						$header = Helpers::security_check_elements_before_save( $header, $post_id, 'header' );
 
 						if ( is_array( $header ) && count( $header ) ) {
@@ -1804,7 +1803,6 @@ class Ajax {
 				// Footer template
 				case 'footer':
 					if ( isset( $_POST['footer'] ) ) {
-						// @since 1.5.4
 						$footer = Helpers::security_check_elements_before_save( $footer, $post_id, 'footer' );
 
 						if ( is_array( $footer ) && count( $footer ) ) {
@@ -1823,7 +1821,6 @@ class Ajax {
 				// Any other template type
 				default:
 					if ( isset( $_POST['content'] ) ) {
-						// @since 1.5.4
 						$content = Helpers::security_check_elements_before_save( $content, $post_id, 'content' );
 
 						if ( is_array( $content ) && count( $content ) ) {
@@ -1864,7 +1861,6 @@ class Ajax {
 		 * @since 1.4
 		 */
 		if ( isset( $_POST['content'] ) && get_post_type( $post_id ) !== BRICKS_DB_TEMPLATE_SLUG ) {
-			// @since 1.5.4
 			$content = Helpers::security_check_elements_before_save( $content, $post_id, 'content' );
 
 			if ( is_array( $content ) && count( $content ) ) {

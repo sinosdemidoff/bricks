@@ -205,7 +205,7 @@ class Email extends Base {
 		$message    = '';
 
 		foreach ( $form_settings['fields'] as $field ) {
-			$field_label = $field['label'] ?? '';
+			$field_label = $form->render_data( $field['label'] ?? '' );
 			$field_id    = $field['id'] ?? '';
 			$field_value = $form->get_field_value( $field_id );
 

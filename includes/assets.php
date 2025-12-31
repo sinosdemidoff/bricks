@@ -3738,7 +3738,7 @@ class Assets {
 	 * @since 2.0
 	 */
 	public function wrap_select2_styles_in_cascade_layer( $tag, $handle ) {
-		if ( $handle === 'select2-css' || $handle === 'select2' ) {
+		if ( $handle === 'select2-css' || $handle === 'select2' || $handle === 'wc-select2' ) {
 			preg_match( '/href=(["\'])([^\1]+)\1.*?media=\'([^\']+)\'/', $tag, $matches );
 			$css_url = $matches[2];
 			$media   = $matches[3];
@@ -3756,7 +3756,7 @@ class Assets {
 	 * @since 2.1: NOTE: Not in use as it causes Woo product gallery lightbox to not work
 	 */
 	public function wrap_photoswipe_styles_in_cascade_layer( $tag, $handle ) {
-		if ( $handle === 'photoswipe' || $handle === 'photoswipe-default-skin' ) {
+		if ( $handle === 'wc-photoswipe' || $handle === 'photoswipe' || $handle === 'photoswipe-default-skin' ) {
 			// Extract the CSS file URL from the tag
 			preg_match( '/href=(["\'])([^\1]+)\1/', $tag, $matches );
 

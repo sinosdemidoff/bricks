@@ -31,14 +31,18 @@ $license_status = License::get_license_status() ?? 'no_license';
 
 				<input type="hidden" name="action" value="bricks_deactivate_license">
 
-				<?php wp_nonce_field( 'bricks-nonce-admin', 'nonce' ); // @since 1.5.4 ?>
+				<?php wp_nonce_field( 'bricks-nonce-admin', 'nonce' ); ?>
 
 				<input type="submit" value="<?php esc_html_e( 'Deactivate license', 'bricks' ); ?>" class="button button-secondary button-large">
+				<input type="button" id="bricks-revalidate-license" value="<?php esc_html_e( 'Re-validate license', 'bricks' ); ?>" class="button button-primary button-large">
 			</div>
 
 			<div class="status-wrapper">
 				<?php esc_html_e( 'Status', 'bricks' ); ?>: <span class="status <?php echo esc_attr( $license_status ); ?>"><?php echo esc_html( $license_status_label ); ?></span>
 		  </div>
+
+			<div class="error-message"></div>
+			<div class="success-message"></div>
 
 				<?php if ( $license_status === 'website_inactive' ) { ?>
 				<p class="license-mismatch"><?php esc_html_e( 'Your website does not match your license key. Please deactivate and then reactivate your license.', 'bricks' ); ?></p>

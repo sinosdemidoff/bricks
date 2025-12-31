@@ -131,6 +131,7 @@ class Theme_Styles {
 			'team-members',
 			'testimonials',
 			'text',
+			'text-basic', // @since 2.1.3
 			'video',
 			'wordpress',
 		];

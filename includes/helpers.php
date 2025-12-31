@@ -3737,7 +3737,8 @@ class Helpers {
 				}
 
 				// Only init query if query settings is available
-				if ( isset( $element_data['element']['settings']['query'] ) ) {
+				// @since 2.x: Check hasLoop too as user might turn off loop but leave query settings
+				if ( isset( $element_data['element']['settings']['query'] ) && isset( $element_data['element']['settings']['hasLoop'] ) ) {
 					$query_object = new Query( $element_data['element'] );
 					if ( $query_object ) {
 						$query_object->destroy();

@@ -1182,8 +1182,19 @@ class Element_Slider_Nested extends Element {
 
 		$splide_class = [ 'splide' ];
 
+		// Check if autoHeight is enabled (either in default or custom options)
+		$auto_height_enabled = ! empty( $settings['autoHeight'] );
+
+		// If using custom options, check if autoHeight is set in the custom options JSON
+		if ( ! $auto_height_enabled && ! empty( $settings['optionsType'] ) && $settings['optionsType'] === 'custom' && ! empty( $settings['options'] ) ) {
+			$custom_options = is_array( $settings['options'] ) ? $settings['options'] : json_decode( stripslashes( $settings['options'] ), true );
+			if ( is_array( $custom_options ) && ! empty( $custom_options['autoHeight'] ) ) {
+				$auto_height_enabled = true;
+			}
+		}
+
 		// To allpy required CSS when using autoHeight (@since 1.9.1)
-		if ( ! empty( $settings['autoHeight'] ) ) {
+		if ( $auto_height_enabled ) {
 			$splide_class[] = 'brx-auto-height';
 		}
 

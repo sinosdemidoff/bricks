@@ -229,6 +229,7 @@ function bricksRegisterComponentBlocks() {
 				keywords: ['bricks', window.bricksData.i18n.component],
 				attributes: attributes,
 				supports: {
+					align: ['wide', 'full'],
 					customClassName: false,
 					html: false,
 					anchor: false,

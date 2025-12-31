@@ -12,12 +12,33 @@ class Product_Gallery extends Element {
 
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'wc-single-product' );
-		wp_enqueue_script( 'flexslider' );
+
+		$use_wc_script_prefix = defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '10.3.0', '>=' );
+
+		// Use 'wc-flexslider' for WooCommerce 10.3.0+
+		wp_enqueue_script( $use_wc_script_prefix ? 'wc-flexslider' : 'flexslider' );
+
+		/**
+		 * Enqueue all PhotoSwipe assets on all pages
+		 *
+		 * Otherwise the gallery is not working correctly on non-single product pages.
+		 *
+		 * @since 2.1.3
+		 */
+		wp_enqueue_script( 'wc-single-product' );
+
+		// Use 'wc-photoswipe-ui-default' for WooCommerce 10.3.0+
+		wp_enqueue_script( $use_wc_script_prefix ? 'wc-photoswipe-ui-default' : 'photoswipe-ui-default' );
+
+		wp_enqueue_style( 'photoswipe-default-skin' );
+		add_action( 'wp_footer', 'woocommerce_photoswipe' );
 
 		if ( bricks_is_builder_iframe() ) {
-			wp_enqueue_script( 'zoom' );
+			// Use 'wc-zoom' for WooCommerce 10.3.0+
+			wp_enqueue_script( $use_wc_script_prefix ? 'wc-zoom' : 'zoom' );
 		} elseif ( ! Database::get_setting( 'woocommerceDisableProductGalleryZoom', false ) ) {
-			wp_enqueue_script( 'zoom' );
+			// Use 'wc-zoom' for WooCommerce 10.3.0+
+			wp_enqueue_script( $use_wc_script_prefix ? 'wc-zoom' : 'zoom' );
 		}
 	}
 

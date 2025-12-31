@@ -1161,9 +1161,15 @@ class Frontend {
 			return;
 		}
 
-		// Check for required query parameters (activation_key, user_id), otherwise redirect to failure page
+		/**
+		 * If no activation key or user ID is set, just return and process the page normally
+		 *
+		 * Example: User lands on the activation page without an activation link.
+		 *
+		 * @since 2.1.3
+		 */
 		if ( ! isset( $_GET['activation_key'] ) || ! isset( $_GET['user_id'] ) ) {
-			wp_safe_redirect( get_permalink( $page_failure ) );
+			return;
 		}
 
 		// Get user ID and activation key
@@ -1173,6 +1179,7 @@ class Frontend {
 		// Check: If user ID or activation key is empty, redirect to failure page
 		if ( empty( $user_id ) || empty( $activation_key ) ) {
 			wp_safe_redirect( get_permalink( $page_failure ) );
+			exit;
 		}
 
 		// If user is already activated, skip activation
@@ -1199,6 +1206,7 @@ class Frontend {
 		// Else: redirect to activation error page
 		else {
 			wp_safe_redirect( get_permalink( $page_failure ) );
+			exit;
 		}
 	}
 }

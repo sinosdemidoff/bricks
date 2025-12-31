@@ -2772,6 +2772,17 @@ abstract class Element {
 					'placeholder' => 'div',
 				],
 
+				'width'             => [
+					'label' => esc_html__( 'Width', 'bricks' ),
+					'type'  => 'number',
+					'units' => true,
+					'css'   => [
+						[
+							'property' => 'width',
+						],
+					],
+				],
+
 				'dynamicMargin'     => [
 					'label' => esc_html__( 'Margin', 'bricks' ),
 					'type'  => 'spacing',
@@ -4485,7 +4496,7 @@ abstract class Element {
 		// Get in-builder repeater item real-time/un-saved settings from element settings
 		foreach ( $this->settings as $key => $value ) {
 			// Setting key belongs to the current repeater item
-			if ( strpos( $key, "$control_key|$repeater_item_id|" ) !== -1 ) {
+			if ( strpos( $key, "$control_key|$repeater_item_id|" ) !== false ) {
 				$component_instance_settings[ $key ] = $value;
 			}
 		}
@@ -4494,7 +4505,7 @@ abstract class Element {
 			// Get property defaults or custom value for current repeater item (use repeater item 'id')
 			foreach ( $component_instance_settings as $key => $value ) {
 				// Setting key belongs to the current repeater item
-				if ( strpos( $key, "$control_key|$repeater_item_id|" ) !== -1 ) {
+				if ( strpos( $key, "$control_key|$repeater_item_id|" ) !== false ) {
 					// Remove repeater control key && repeater item ID from the key to match the settings key of the repeater item
 					$setting_key = str_replace( "$control_key|$repeater_item_id|", '', $key );
 

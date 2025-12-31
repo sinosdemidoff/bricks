@@ -904,7 +904,7 @@ class Element_Nav_Nested extends Element {
 		// @since 2.0: Adds padding control for dropdown content (only for mobile)
 		$controls['mobileMenuContentPadding'] = [
 			'group'       => 'mobile-menu',
-			'label'       => esc_html__( 'Padding', 'bricks' ),
+			'label'       => esc_html__( 'Padding', 'bricks' ) . ' (' . esc_html__( 'Dropdown', 'bricks' ) . ')',
 			'type'        => 'spacing',
 			'css'         => [
 				[
@@ -912,7 +912,7 @@ class Element_Nav_Nested extends Element {
 					'selector' => '&.brx-open .brx-dropdown-content > *',
 				],
 			],
-			'description' => esc_html__( 'Used to creat visual hiarchy between nested dropdowns.', 'bricks' ),
+			'description' => esc_html__( 'Used to create visual hierarchy between nested dropdowns.', 'bricks' ),
 		];
 
 		$controls['mobileMenuAlignItems'] = [

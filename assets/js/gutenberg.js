@@ -15,7 +15,7 @@ function bricksAdminGutenbergEditWithBricks() {
 	if (!editWithBricksLink) {
 		editWithBricksLink = document.createElement('a')
 		editWithBricksLink.id = 'wp-admin-bar-edit_with_bricks'
-		editWithBricksLink.href = window.bricksData.builderEditLink
+		editWithBricksLink.href = window.bricksGutenbergData.builderEditLink
 		editWithBricksLink.innerText = window.bricksData.i18n.editWithBricks
 	}
 
@@ -153,7 +153,7 @@ function handleEmptyContentCore(rootContainer) {
 
 		const editButton = document.createElement('a')
 		editButton.className = 'button button-primary'
-		editButton.href = window.bricksData.builderEditLink || '#'
+		editButton.href = window.bricksGutenbergData.builderEditLink || '#'
 		editButton.textContent = window.bricksData.i18n.editWithBricks
 
 		// Handle edit button click based on iframe context
@@ -164,13 +164,13 @@ function handleEmptyContentCore(rootContainer) {
 				window.top.postMessage(
 					{
 						type: 'bricksOpenBuilder',
-						url: window.bricksData.builderEditLink
+						url: window.bricksGutenbergData.builderEditLink
 					},
 					'*'
 				)
 			} else {
 				// We're in top window, navigate directly
-				window.location.href = window.bricksData.builderEditLink
+				window.location.href = window.bricksGutenbergData.builderEditLink
 			}
 		})
 

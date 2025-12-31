@@ -193,6 +193,7 @@ class Interactions {
 					'options'     => [
 						'show'            => esc_html__( 'Show element', 'bricks' ),
 						'hide'            => esc_html__( 'Hide element', 'bricks' ),
+						'click'           => esc_html__( 'Click element', 'bricks' ),
 						'setAttribute'    => esc_html__( 'Set attribute', 'bricks' ),
 						'removeAttribute' => esc_html__( 'Remove attribute', 'bricks' ),
 						'toggleAttribute' => esc_html__( 'Toggle attribute', 'bricks' ),
@@ -571,6 +572,24 @@ class Interactions {
 					}
 				}
 
+				// WPML: Translate popup template IDs in interactions (@since 2.1.3)
+				if ( \Bricks\Integrations\Wpml\Wpml::$is_active &&
+					isset( $element_interactions['action'] ) &&
+					isset( $element_interactions['target'] ) &&
+					isset( $element_interactions['templateId'] ) &&
+					$element_interactions['target'] === 'popup' &&
+					is_numeric( $element_interactions['templateId'] )
+				) {
+					$original_popup_id = intval( $element_interactions['templateId'] );
+
+					// Get translated popup ID using WPML
+					$translated_popup_id = apply_filters( 'wpml_object_id', $original_popup_id, BRICKS_DB_TEMPLATE_SLUG, true );
+
+					if ( $translated_popup_id && $translated_popup_id !== $original_popup_id ) {
+						$interactions[ $index ]['templateId'] = $translated_popup_id;
+					}
+				}
+
 				// Early exit if action is not startAnimation
 				if ( isset( $element_interactions['action'] ) && $element_interactions['action'] !== 'startAnimation' ) {
 					continue;
@@ -656,6 +675,25 @@ class Interactions {
 		if ( ! empty( $template_settings['template_interactions'] ) ) {
 			// STEP: Parse dynamic data
 			$interactions = map_deep( $template_settings['template_interactions'], [ 'Bricks\Integrations\Dynamic_Data\Providers', 'render_content' ] );
+
+			// WPML: Translate popup template IDs in template interactions (@since 2.1.3)
+			if ( \Bricks\Integrations\Wpml\Wpml::$is_active ) {
+				foreach ( $interactions as $index => $interaction ) {
+					if ( isset( $interaction['action'] ) &&
+						isset( $interaction['target'] ) &&
+						isset( $interaction['templateId'] ) &&
+						$interaction['target'] === 'popup' &&
+						is_numeric( $interaction['templateId'] )
+					) {
+						$original_popup_id   = intval( $interaction['templateId'] );
+						$translated_popup_id = apply_filters( 'wpml_object_id', $original_popup_id, BRICKS_DB_TEMPLATE_SLUG, true );
+
+						if ( $translated_popup_id && $translated_popup_id !== $original_popup_id ) {
+							$interactions[ $index ]['templateId'] = $translated_popup_id;
+						}
+					}
+				}
+			}
 
 			// Ensure animation is enqueued even if the page has no data-interactions (@since 1.8)
 			$json_interactions = wp_json_encode( $interactions );
